@@ -1,0 +1,4 @@
+---
+# vars file for config-centos67
+yum_packages:
+- vim

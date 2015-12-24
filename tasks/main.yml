@@ -1,0 +1,36 @@
+---
+# tasks file for config-centos67
+
+# fix timezone
+- file: src=/usr/share/zoneinfo/America/New_York
+    dest=/etc/localtime
+    force=true
+    state=link
+
+# bashrc
+- copy: src=bashrc
+    dest=/etc/profile.d/bashrc.sh
+    mode=0644
+
+# install dynamic motd
+- lineinfile: dest=/etc/ssh/sshd_config
+    regexp="^\s*#?\s*PrintMotd\s.*$"
+    line="PrintMotd no"
+
+- lineinfile: dest=/etc/pam.d/login
+    regexp="^\s*#?\s*-?session\s*optional\s*pam_motd.so\s*.*$"
+    line="# session optional pam_motd.so"
+
+- lineinfile: dest=/etc/profile
+    regexp="^\s*#?\s*/usr/local/bin/dynmotd\s.*$"
+    line="/usr/local/bin/dynmotd"
+    insertafter=EOF
+
+- copy: src=dynmotd
+    dest=/usr/local/bin/dynmotd
+    mode=0755
+
+# yum installs
+- yum: name={{item}} state=latest
+  with_items:
+  - [ net-tools, xz, tar, wget, tree, vim, ntp, rsync ]

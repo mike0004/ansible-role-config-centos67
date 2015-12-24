@@ -1,0 +1,113 @@
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias h9='history 9'
+alias h='history'
+alias l='ls -alhF'
+alias la='ls -ahF'
+alias ll='ls -alht'
+alias ltr='ls -lahtr'
+alias psg='ps -ef|grep -i --color=AUTO'
+alias hgrep='history|grep -i --color=AUTO'
+alias h9='history 10'
+alias c='clear'
+alias vbp='vi ~/.bash_profile && source ~/.bash_profile'
+alias vbr='vi ~/.bashrc  && source ~/.bashrc'
+alias grephosts="cat /etc/hosts | grep -i --color=AUTO"
+alias edhosts="sudo vi /etc/hosts"
+alias grep="grep --color=AUTO"
+alias lal='git --no-pager log --graph --decorate --all --format="%h (%Cblue%an%Creset) (%d) %s" -10'
+alias co='git checkout'
+#alias du="du -sh"  # display du sizes in human readable format and summarized
+alias dush="du -sh"
+alias gobin='cd ~/bin'
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+whence() { ls -l `command -v $1`; }  # find a command's real location
+
+# history
+export HISTFILESIZE=20000
+export HISTSIZE=10000
+export HISTTIMEFORMAT="[%Y%m%d %T] "
+export HISTFILE=~/.bash_large_history
+export HISTCONTROL=ignoredups # don't store repeated commands more than once
+
+# make ls colorful
+export CLICOLOR=1
+export LSCOLORS=gxBxhxDxfxhxhxhxhxcxcx
+set_prompt () {
+    Last_Command=$? # Must come first!
+    history -a
+    Blue='\[\e[01;34m\]'
+    White='\[\e[01;37m\]'
+    Red='\[\e[01;31m\]'
+    Green='\[\e[01;32m\]'
+    Reset='\[\e[00m\]'
+    FancyX='\342\234\227'
+    Checkmark='\342\234\223'
+
+    # Add a bright white exit status for the last command
+    PS1="$White\$? "
+    # If it was successful, print a green check mark. Otherwise, print
+    # a red X.
+    if [[ $Last_Command == 0 ]]; then
+        PS1+="$Green$Checkmark "
+    else
+        PS1+="$Red$FancyX "
+    fi
+    # If root, just print the host in red. Otherwise, print the current user
+    # and host in green.
+    if [[ $EUID == 0 ]]; then
+        PS1+="$Red\\h "
+    else
+        PS1+="$Green\\u@\\h "
+    fi
+    # Print the working directory and prompt marker in blue, and reset
+    # the text color to the default.
+    PS1+="$Blue\\w \\\$$Reset "
+}
+PROMPT_COMMAND='set_prompt'
+
+# super awesome alias helper - to use, type any alias followed by a question mark, i.e. $ l?
+# result is that it shows the alias definition, see http://stackoverflow.com/a/25985890/1574942
+# for a in $(alias | sed 's/alias \([^=]*\)=.*/\1/'); do alias "${a}?"="type '$a'"; done
+command_not_found_handle () {
+   if [[ $1 =~ .*\? ]]; then
+       type ${1%?}
+   else
+       printf "Command not found: $1\n"
+       return 127
+   fi
+}
+function datestr() { echo "`date +%Y%m%d_%H%M`"; }
+function findbyname { find . -name "$1" $2; }
+
+alias td='tree -d -L 1'
+alias td1='tree -d -L 1'
+alias td2='tree -d -L 2'
+alias td3='tree -d -L 3'
+alias td4='tree -d -L 4'
+alias tdx='tree -d'
+
+# misc utils, only tested with mac
+alias jsonpp='python -m json.tool'
+alias xmlpp='xmllint --format'
+
+shopt -s histappend
+shopt -s histverify
+
+# grep aliases
+alias alg="alias|grep -i --color=AUTO"
+
+# git aliases
+alias pull='git pull'
+alias push='git push'
+alias gs='git status'
+alias gsu='git status -uno'
+alias ga='git add'
+alias gb='git branch'
+alias gc='git commit'
+alias gd='git diff'
+alias go='git checkout'
+alias get='git'
+alias got='git'
+export PS1='\n\[\e[31;1m\]CWD\[\e[0m\]:\[\e[36;1m\]\w\n\[\e[32;1m\]\@:\u@\h\[\e[0m\]\$ '
